@@ -1,0 +1,99 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review App</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1 style="color:  #d6c909;">Reviews</h1>
+ 
+    <form id="review-form">
+      <label for="username">Username:</label>
+      <input type="text" id="username" required>
+      
+      <label for="rating">Rating:</label>
+      <div class="star-rating" id="star-rating">
+        <input type="radio" id="star5" name="rating" value="5" required>
+        <label for="star5"></label>
+        <input type="radio" id="star4" name="rating" value="4">
+        <label for="star4"></label>
+        <input type="radio" id="star3" name="rating" value="3">
+        <label for="star3"></label>
+        <input type="radio" id="star2" name="rating" value="2">
+        <label for="star2"></label>
+        <input type="radio" id="star1" name="rating" value="1">
+        <label for="star1"></label>
+      </div>
+      
+      <label for="comment">Comment:</label>
+      <textarea id="comment" required></textarea>
+      
+      <button type="submit" id="btn">Submit Review</button>
+    </form>
+    <div id="reviews-container"></div>
+  </div>
+ 
+</body>
+
+</html>
+<script>
+    // app.js
+
+document.addEventListener('DOMContentLoaded', () => {
+  const reviewsContainer = document.getElementById('reviews-container');
+  const reviewForm = document.getElementById('review-form');
+
+ 
+  fetchReviews();
+
+
+  reviewForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const rating = document.querySelector('input[name="rating"]:checked').value;
+    const comment = document.getElementById('comment').value;
+
+    await submitReview({ username, rating, comment });
+    fetchReviews(); 
+  });
+
+
+  async function fetchReviews() {
+    const response = await fetch('http://localhost:1111/review/retrieve');
+    const reviews = await response.json();
+
+    reviewsContainer.innerHTML = ''; 
+
+    reviews.forEach((review) => {
+      const reviewElement = document.createElement('div');
+      reviewElement.classList.add('review');
+      reviewElement.innerHTML = `
+        <strong>${review.username}</strong>
+        <p>Rating: ${review.rating}</p>
+        <p>${review.comment}</p>
+      `;
+      reviewsContainer.appendChild(reviewElement);
+    });
+  }
+
+  // Function to submit a new review
+  async function submitReview(reviewData) {
+    await fetch('http://localhost:1111/review/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(reviewData),
+    });
+  }
+});
+
+</script>

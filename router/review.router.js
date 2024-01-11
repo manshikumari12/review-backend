@@ -32,4 +32,19 @@ reviewRouter.get('/retrieve', async (req, res) => {
 
 
 
+  reviewRouter.delete('/reviews/:id', async (req, res) => {
+    try {
+      const deletedReview = await ReviewModel.findByIdAndDelete(req.params.id);
+  
+      if (!deletedReview) {
+        return res.status(404).json({ error: 'Review not found' });
+      }
+  
+      res.status(200).json({ message: 'Review deleted successfully', deletedReview });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+
 module.exports={reviewRouter}

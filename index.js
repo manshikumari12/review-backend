@@ -2,6 +2,8 @@ const express =require("express")
 const {connectDB}=require("./db")
 const {reviewRouter}=require("./router/review.router")
 const app =express()
+const  cors =require("cors")
+app.use(cors())
 app.use(express.json())
 
 app.use("/review",reviewRouter)
